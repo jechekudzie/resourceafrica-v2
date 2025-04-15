@@ -27,10 +27,14 @@ class ConflictOutcomeSeeder extends Seeder
         ];
 
         foreach ($conflictOutcomes as $conflictOutcome) {
+
+
             ConflictOutcome::create([
                 'name' => $conflictOutcome['name'],
                 'conflict_type_id' => $conflictTypes[$conflictOutcome['type']]->id,
             ]);
+
+            
         }
     }
 }
