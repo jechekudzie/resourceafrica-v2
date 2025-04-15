@@ -16,6 +16,7 @@ class ConflictOutcomeSeeder extends Seeder
     {
         //
         $conflictTypes = ConflictType::all()->keyBy('name');
+        
         $conflictOutcomes = [
             ['name' => 'Crop destruction', 'type' => 'Human - Wildlife'],
             ['name' => 'Livestock death', 'type' => 'Wildlife - Human'],
