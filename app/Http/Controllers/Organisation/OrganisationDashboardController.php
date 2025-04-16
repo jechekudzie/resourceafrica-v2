@@ -32,7 +32,7 @@ class OrganisationDashboardController extends Controller
     public function index(Organisation $organisation)
     {
         $user = Auth::user();
-        
+
         // Check if the user has a role with the organization
         $userRole = $user ? $user->getFirstCommonRoleWithOrganization($organisation) : null;
         
