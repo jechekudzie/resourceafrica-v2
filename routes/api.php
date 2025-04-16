@@ -30,7 +30,8 @@ Route::get('/user', function (Request $request) {
 Route::get('/organisations/{organisation}/quota-allocations', [QuotaAllocationController::class, 'getQuotaAllocation']);
 
 // Conflict Outcome Dynamic Fields
-Route::get('/conflict-outcomes/{conflictOutcome}/dynamic-fields', [ConflictOutcomeController::class, 'getDynamicFields']);
+Route::get('/conflict-outcomes/{conflictOutcome}/dynamic-fields/{organisation?}', [ConflictOutcomeController::class, 'getDynamicFields']);
+Route::get('/conflict-outcomes/all/{organisation?}', [ConflictOutcomeController::class, 'getAllOutcomes']);
 
 // Get cities by province
 Route::get('/provinces/{province}/cities', function ($province) {

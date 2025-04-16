@@ -450,11 +450,7 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    // Temporary debug route
-    Route::get('/debug/dynamic-fields/{outcomeId}', function($outcomeId) {
-        $controller = new \App\Http\Controllers\Api\ConflictOutcomeController();
-        return $controller->getDynamicFields($outcomeId);
-    });
+    // Debug routes removed - now using API routes
 });
 
 // Add test route for chart

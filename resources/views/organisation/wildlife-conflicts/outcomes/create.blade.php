@@ -69,6 +69,7 @@
         const outcomeSelect = document.getElementById('conflict_outcome_id');
         const fieldsContainer = document.getElementById('dynamic-fields-container');
         const form = document.querySelector('form');
+        const organisationId = "{{ $organisation->id }}";
         
         // Log form submission
         form.addEventListener('submit', function(e) {
@@ -93,10 +94,10 @@
             
             fieldsContainer.innerHTML = '<div class="d-flex justify-content-center"><div class="spinner-border text-success" role="status"><span class="visually-hidden">Loading...</span></div></div>';
             
-            console.log(`Fetching dynamic fields for outcome ID: ${outcomeId}`);
+            console.log(`Fetching dynamic fields for outcome ID: ${outcomeId} and organisation ID: ${organisationId}`);
             
-            // Use the debug route for direct testing
-            axios.get(`/debug/dynamic-fields/${outcomeId}`)
+            // Use the API route
+            axios.get(`/api/conflict-outcomes/${outcomeId}/dynamic-fields/${organisationId}`)
                 .then(response => {
                     console.log('Response received:', response);
                     
@@ -110,7 +111,7 @@
                     `;
                     
                     if (data.length === 0) {
-                        fieldsHtml += '<div class="alert alert-warning">No dynamic fields are associated with this outcome type. Add some in the Dynamic Fields section.</div>';
+                        fieldsHtml += '<div class="alert alert-warning">No dynamic fields are associated with this outcome type for your organisation. Add some in the Dynamic Fields section.</div>';
                     } else {
                         fieldsHtml += '<div class="mt-4 border-top pt-4"><h5>Additional Details</h5></div>';
                         

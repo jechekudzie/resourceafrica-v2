@@ -47,8 +47,10 @@ class WildlifeConflictOutcomeController extends Controller
             'conflict_outcome_id' => $validated['conflict_outcome_id'],
         ]);
 
-        // Get dynamic fields for this outcome type
-        $dynamicFields = DynamicField::where('conflict_outcome_id', $validated['conflict_outcome_id'])->get();
+        // Get dynamic fields for this outcome type, filtered by organization
+        $dynamicFields = DynamicField::where('conflict_outcome_id', $validated['conflict_outcome_id'])
+            ->where('organisation_id', $organisation->id)
+            ->get();
         
         // Process dynamic field values if any
         foreach ($dynamicFields as $field) {
@@ -88,8 +90,10 @@ class WildlifeConflictOutcomeController extends Controller
      */
     public function edit(Organisation $organisation, WildlifeConflictIncident $wildlifeConflictIncident, WildlifeConflictOutcome $outcome)
     {
-        // Get dynamic fields for this outcome type
-        $dynamicFields = DynamicField::where('conflict_outcome_id', $outcome->conflict_outcome_id)->get();
+        // Get dynamic fields for this outcome type, filtered by organization
+        $dynamicFields = DynamicField::where('conflict_outcome_id', $outcome->conflict_outcome_id)
+            ->where('organisation_id', $organisation->id)
+            ->get();
         
         // Get existing values
         $dynamicValues = $outcome->dynamicValues->pluck('field_value', 'dynamic_field_id')->toArray();
@@ -108,8 +112,10 @@ class WildlifeConflictOutcomeController extends Controller
      */
     public function update(Request $request, Organisation $organisation, WildlifeConflictIncident $wildlifeConflictIncident, WildlifeConflictOutcome $outcome)
     {
-        // Get dynamic fields for this outcome type
-        $dynamicFields = DynamicField::where('conflict_outcome_id', $outcome->conflict_outcome_id)->get();
+        // Get dynamic fields for this outcome type, filtered by organization
+        $dynamicFields = DynamicField::where('conflict_outcome_id', $outcome->conflict_outcome_id)
+            ->where('organisation_id', $organisation->id)
+            ->get();
         
         // Process dynamic field values
         foreach ($dynamicFields as $field) {
