@@ -41,7 +41,18 @@ class ApiAuthController extends Controller
                 $token = $user->createToken('Resource Africa Password Grant Client');
                 Auth::login($user);
 
-                return $this->ok('Welcome ' . $user->first_name, [
+                if($user->organisations)
+                {
+                    $organisations = $user->organisations;
+                    if($organisations)
+                        {
+                            $organisations->each(function ($organisation) use ($token, $user) {
+                                $organisation->load(['organisationRoles','safariOperators']);
+                            });
+                        }
+                }
+
+                return $this->ok('Welcome ' . $user->name, [
                     'user' => $user,
                     'token' => $token,
                 ]);
@@ -68,7 +79,7 @@ class ApiAuthController extends Controller
         $authUser = Auth::user();
 
         // Find User by user_id
-        $user = User::with(['organisations', 'roles', 'getFirstCommonRoleNameWithOrganization', 'getFirstCommonRoleWithOrganization'])
+        $user = User::with(['organisations', 'roles'])
             ->where('id', '=', $authUser->id)
             ->first();
 
@@ -114,7 +125,7 @@ class ApiAuthController extends Controller
         $user->refresh();
 
         return $this->ok('Profile updated successfully.', [
-            'user' => $user->load(['organisations', 'roles', 'getFirstCommonRoleNameWithOrganization', 'getFirstCommonRoleWithOrganization']),
+            'user' => $user->load(['organisations', 'roles']),
         ]);
     }
 
