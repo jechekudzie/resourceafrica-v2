@@ -1,0 +1,1 @@
+<img src="/logo/logo-ra.png" alt="Resource Africa Logo" style="width: 200px; height: auto; display: block;" {{ $attributes }} /> 
