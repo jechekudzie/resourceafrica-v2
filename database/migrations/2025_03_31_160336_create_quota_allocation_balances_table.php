@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('quota_allocation_balances', function (Blueprint $table) {
             $table->id();
             $table->foreignId('quota_allocation_id')->constrained()->onDelete('cascade');
+            $table->integer('allocated_quota')->default(0);
             $table->integer('total_off_take')->default(0);
             $table->integer('remaining_quota')->default(0);
             $table->timestamps();

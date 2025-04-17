@@ -76,6 +76,18 @@ class Organisation extends Model
             })->get();
     }
 
+    public function safariOperators()
+    {
+
+        $safariOperators = $this->childOrganisations()->whereHas('organisationType', function ($query) {
+            $query->whereRaw('lower(name) = ?', ['safari operators']);
+        });
+
+        return $safariOperators;
+
+    }
+
+
     //get the first group of child organisations
     public function firstGroupOfChildOrganisations()
     {
@@ -91,7 +103,7 @@ class Organisation extends Model
         return $firstGroup;
     }
 
-    //get any group of child organisations  
+    //get any group of child organisations
     public function anyGroupOfChildOrganisations()
     {
         // Get all child organizations
@@ -237,6 +249,8 @@ class Organisation extends Model
     {
         return $this->hasMany(ClientSource::class);
     }
+
+
 
     public function getSlugOptions(): SlugOptions
     {
