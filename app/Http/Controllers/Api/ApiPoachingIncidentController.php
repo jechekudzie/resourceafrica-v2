@@ -70,9 +70,9 @@ class ApiPoachingIncidentController extends Controller
             'species.*.estimate_number' => 'nullable|integer|min:0',
             'poaching_methods' => 'required|array',
             'poaching_methods.*' => 'exists:poaching_methods,id',
-            'poachers' => 'required|array',
-            'poachers.*.first_name' => 'required|string|max:255',
-            'poachers.*.last_name' => 'required|string|max:255',
+            'poachers' => 'nullable|array',
+            'poachers.*.first_name' => 'nullable|string|max:255',
+            'poachers.*.last_name' => 'nullable|string|max:255',
             'poachers.*.middle_name' => 'nullable|string|max:255',
             'poachers.*.age' => 'nullable|integer',
             'poachers.*.status' => 'nullable|string|in:suspected,arrested,bailed,sentenced,released',
@@ -306,4 +306,64 @@ class ApiPoachingIncidentController extends Controller
             return $this->error('Failed to delete poaching incident: ' . $e->getMessage(), 500);
         }
     }
+
+    public function poachingMethods()
+    {
+        $methods = PoachingMethod::all();
+        return $this->ok('Poaching methods retrieved successfully', $methods);
+    }
+/**
+ * Add a new poacher to an existing poaching incident.
+ */
+public function addPoacher(Request $request, string $organisationSlug, PoachingIncident $poachingIncident)
+{
+    // Find organisation by slug
+    $organisation = Organisation::where('slug', $organisationSlug)->firstOrFail();
+
+    // Check if the poaching incident belongs to the organisation
+    if ($poachingIncident->organisation_id !== $organisation->id) {
+        return $this->notFound('Poaching incident not found');
+    }
+
+    // Validate the poacher details
+    $validated = $request->validate([
+        'first_name' => 'required|string|max:255',
+        'last_name' => 'required|string|max:255',
+        'middle_name' => 'nullable|string|max:255',
+        'age' => 'nullable|integer',
+        'status' => 'nullable|string|in:suspected,arrested,bailed,sentenced,released',
+        'country_id' => 'nullable|exists:countries,id',
+        'province_id' => 'nullable|exists:provinces,id',
+        'city_id' => 'nullable|exists:cities,id',
+        'offence_type_id' => 'nullable|exists:offence_types,id',
+        'poacher_type_id' => 'nullable|exists:poacher_types,id',
+        'poaching_reason_id' => 'nullable|exists:poaching_reasons,id',
+    ]);
+
+    try {
+        DB::beginTransaction();
+
+        // Create a new poacher associated with the poaching incident
+        $poacher = $poachingIncident->poachers()->create([
+            'first_name' => $validated['first_name'],
+            'last_name' => $validated['last_name'],
+            'middle_name' => $validated['middle_name'] ?? null,
+            'age' => $validated['age'] ?? null,
+            'status' => $validated['status'] ?? null,
+            'country_id' => $validated['country_id'] ?? null,
+            'province_id' => $validated['province_id'] ?? null,
+            'city_id' => $validated['city_id'] ?? null,
+            'offence_type_id' => $validated['offence_type_id'] ?? null,
+            'poacher_type_id' => $validated['poacher_type_id'] ?? null,
+            'poaching_reason_id' => $validated['poaching_reason_id'] ?? null,
+        ]);
+
+        DB::commit();
+
+        return $this->created('Poacher added successfully', $poacher);
+    } catch (\Exception $e) {
+        DB::rollBack();
+        return $this->error('Failed to add poacher: ' . $e->getMessage(), 500);
+    }
+}
 }

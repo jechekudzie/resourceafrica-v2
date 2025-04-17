@@ -100,11 +100,15 @@ Route::group(['middleware' => [JsonResponse::class]], function () {
             });
 
             Route::prefix('poaching')->group(function () {
+                Route::get('/methods', [ApiPoachingIncidentController::class, 'poachingMethods']);
                 Route::get('/{organisation}/poaching-incidents', [ApiPoachingIncidentController::class, 'index']);
                 Route::post('/{organisation}/poaching-incidents', [ApiPoachingIncidentController::class, 'store']);
                 Route::get('/{organisation}/poaching-incidents/{poachingIncident}', [ApiPoachingIncidentController::class, 'show']);
                 Route::put('/{organisation}/poaching-incidents/{poachingIncident}', [ApiPoachingIncidentController::class, 'update']);
                 Route::delete('/{organisation}/poaching-incidents/{poachingIncident}', [ApiPoachingIncidentController::class, 'destroy']);
+                Route::post('{organisation}/poaching-incidents/{poachingIncident}/poachers', [ApiPoachingIncidentController::class, 'addPoacher']
+                )->name('api.poaching-incidents.poachers.store');
+
             });
 
         });
